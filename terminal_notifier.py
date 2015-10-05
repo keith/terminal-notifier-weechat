@@ -6,6 +6,7 @@
 #
 # Version 1.0.0: initial release
 # Version 1.0.1: fix escape characters which broke terminal-notifier
+# Version 1.0.2: set the nick as the title of the notification
 
 import distutils.spawn
 import os
@@ -14,14 +15,20 @@ import weechat
 
 
 def notify(data, signal, signal_data):
-    message = signal_data
+    separated = signal_data.split("\t")
+    try:
+        name = separated[0]
+    except IndexError:
+        name = "WeeChat"
+
+    message = "\t".join(separated[1:])
     if message[0] is "[":
         message = "\\%s" % message
     elif message[0] is "-":
         message = "\\%s" % message
 
-    command = ("terminal-notifier -message %s -title WeeChat -sound Hero"
-               % pipes.quote(message))
+    command = ("terminal-notifier -message %s -title %s -sound Hero"
+               % (pipes.quote(message), pipes.quote(name)))
     exit_code = os.system(command)
     if exit_code == 0:
         return weechat.WEECHAT_RC_ERROR
