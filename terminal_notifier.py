@@ -1,3 +1,11 @@
+# This weechat plugin sends OS X notifications for weechat messages
+#
+# Install terminal-notifier, no other configuration needed.
+#
+# History:
+# 10-04-2015
+# Version 1.0.0: initial release
+
 import distutils.spawn
 import os
 import pipes
