@@ -12,7 +12,7 @@ Install `terminal-notifier` and copy the script to
 ```sh
 brew install terminal-notifier
 mkdir -p ~/.weechat/python/autoload
-wget https://raw.githubusercontent.com/keith/terminal-notifier-weechat/master/terminal_notifier.py
+wget https://raw.githubusercontent.com/keith/terminal-notifier-weechat/master/terminal_notifier.py ~/.weechat/python/autoload
 ```
 
 This is a python rewrite of [this ruby
