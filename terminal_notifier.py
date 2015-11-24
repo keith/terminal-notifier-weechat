@@ -14,6 +14,10 @@ import pipes
 import weechat
 
 
+def needs_escape(string):
+    return string[0] in '[-("'
+
+
 def notify(data, signal, signal_data):
     separated = signal_data.split("\t")
     try:
@@ -22,13 +26,7 @@ def notify(data, signal, signal_data):
         name = "WeeChat"
 
     message = "\t".join(separated[1:])
-    if message[0] is "[":
-        message = "\\%s" % message
-    elif message[0] is "-":
-        message = "\\%s" % message
-    elif message[0] is "(":
-        message = "\\%s" % message
-    elif message[0] is '"':
+    if needs_escape(message):
         message = "\\%s" % message
 
     command = ("terminal-notifier -message %s -title %s -sound Hero"
