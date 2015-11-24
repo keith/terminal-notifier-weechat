@@ -26,6 +26,10 @@ def notify(data, signal, signal_data):
         message = "\\%s" % message
     elif message[0] is "-":
         message = "\\%s" % message
+    elif message[0] is "(":
+        message = "\\%s" % message
+    elif message[0] is '"':
+        message = "\\%s" % message
 
     command = ("terminal-notifier -message %s -title %s -sound Hero"
                % (pipes.quote(message), pipes.quote(name)))
