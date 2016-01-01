@@ -8,14 +8,11 @@
 # Version 1.0.1: fix escape characters which broke terminal-notifier
 # Version 1.0.2: set the nick as the title of the notification
 # Version 1.0.3: throttle notification calls
-
+# Version 1.1.0: switch to applescript for notifications
 
 import datetime
-import distutils.spawn
 import functools
-import os
-import os.path
-import pipes
+import subprocess
 import weechat
 
 
@@ -48,36 +45,29 @@ class throttle(object):
         return wrapper
 
 
-def needs_escape(string):
-    return string[0] in '[-("'
-
-
 @throttle(seconds=1)
 def notify(data, signal, signal_data):
     separated = signal_data.split("\t")
     try:
-        name = separated[0]
+        title = separated[0]
     except IndexError:
-        name = "WeeChat"
+        title = "WeeChat"
 
     message = "\t".join(separated[1:])
-    if needs_escape(message):
-        message = "\\%s" % message
-
-    command = ("terminal-notifier -message %s -title %s -sound Hero"
-               % (pipes.quote(message), pipes.quote(name)))
-    exit_code = os.system(command)
+    notification = """display notification "%s" with title "%s" """ % (message,
+                                                                       title)
+    process = subprocess.Popen("osascript -".split(), stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process.communicate(notification)
+    exit_code = process.wait()
     if exit_code == 0:
-        return weechat.WEECHAT_RC_ERROR
-    else:
         return weechat.WEECHAT_RC_OK
+    else:
+        return weechat.WEECHAT_RC_ERROR
 
 
 def main():
-    if distutils.spawn.find_executable("terminal-notifier") is None:
-        return weechat.WEECHAT_RC_ERROR
-
-    if not weechat.register("terminal_notifier", "Keith Smiley", "1.0.3", "MIT",
+    if not weechat.register("terminal_notifier", "Keith Smiley", "1.1.0", "MIT",
                             "Get OS X notifications for messages", "", ""):
         return weechat.WEECHAT_RC_ERROR
 
