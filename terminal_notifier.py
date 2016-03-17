@@ -9,8 +9,10 @@
 # Version 1.0.2: set the nick as the title of the notification
 # Version 1.0.3: throttle notification calls
 # Version 1.1.0: switch to applescript for notifications
+# Version 1.1.1: handle script not existing
 
 import datetime
+import distutils.spawn
 import functools
 import subprocess
 import weechat
@@ -70,6 +72,9 @@ def main():
     if not weechat.register("terminal_notifier", "Keith Smiley", "1.1.0", "MIT",
                             "Get OS X notifications for messages", "", ""):
         return weechat.WEECHAT_RC_ERROR
+
+    if distutils.spawn.find_executable("osascript") is None:
+        return weechat.WEECHAT_RC_OK
 
     weechat.hook_signal("weechat_pv", "notify", "")
     weechat.hook_signal("weechat_highlight", "notify", "")
